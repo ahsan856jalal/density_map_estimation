@@ -85,8 +85,14 @@ def img_test(pretrained_model, img_path, divide=50, ds=1):
     if torch.cuda.is_available():
         dmp = outputs[0].squeeze().detach().cpu().numpy()
         amp = outputs[-1].squeeze().detach().cpu().numpy()
-        dmp_file_path = '/content/drive/MyDrive/MARUNet/datasets/CrowdCounting/dmp_IMG_7.h5'
-        amp_file_path = '/content/drive/MyDrive/MARUNet/datasets/CrowdCounting/amp_IMG_7.h5'
+        file_name1 = os.path.basename(args.img_path)
+        file_name, file_extension = os.path.splitext(file_name1)
+        model_name1=os.path.basename(args.model_path)
+        model_name, _ = os.path.splitext(model_name1)
+        saving_dir=os.path.join(args.save_path,file_name,model_name)
+        os.makedirs(saving_dir,exist_ok=True)
+        dmp_file_path = os.path.join(saving_dir,'dmp_data.h5')
+        amp_file_path = os.path.join(saving_dir,'amp_data.h5')
 
         # Save the dmp and amp arrays as .h5 files
         with h5py.File(dmp_file_path, 'w') as dmp_file:
@@ -97,10 +103,14 @@ def img_test(pretrained_model, img_path, divide=50, ds=1):
 
         dmp_normalized = (map_normalize(dmp) * 255).astype(np.uint8)
         amp_normalized = (map_normalize(amp) * 255).astype(np.uint8)
-        dmp_img = Image.fromarray(dmp_normalized)
-        amp_img = Image.fromarray(amp_normalized)
-        dmp_img.save("/content/drive/MyDrive/MARUNet/dmp_IMG_7.png")
-        amp_img.save("/content/drive/MyDrive/MARUNet/amp_IMG_7.png")
+        dmp_normalized = cv2.applyColorMap((dmp_normalized * 255).astype(np.uint8), cv2.COLORMAP_JET)
+        amp_normalized = cv2.applyColorMap((amp_normalized * 255).astype(np.uint8), cv2.COLORMAP_JET)
+        cv2.imwrite(os.path.join(saving_dir,"dmp.png"), dmp_normalized)
+        cv2.imwrite(os.path.join(saving_dir,"amp.png"), amp_normalized)
+        # dmp_img = Image.fromarray(dmp_normalized)
+        # amp_img = Image.fromarray(amp_normalized)
+        # dmp_img.save(os.path.join(saving_dir,"dmp.png"))
+        # amp_img.save(os.path.join(saving_dir,"amp.png"))
     else:
         dmp = outputs[0].squeeze().detach().numpy()
         amp = outputs[-1].squeeze().detach().numpy()
@@ -125,6 +135,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='visualize the image')
     parser.add_argument('--img_path', metavar='image_path', default='', type=str)
     parser.add_argument('--model_path', metavar='model_path', default='', type=str)
+    parser.add_argument('--save_path', metavar='save_path', default='', type=str)
 
     args = parser.parse_args()
     main(args)
