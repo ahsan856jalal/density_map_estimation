@@ -87,15 +87,20 @@ def main(args):
     #cur_device = torch.device('cpu')
     
     if 'mse+ssim' in args.loss:#bayes
-        if args.dataset=='sha':
-            root = '/content/drive/MyDrive/MARUNet/datasets/CrowdCounting/sha_384_4-10/'
+        if args.dataset=='livecell':
+            print('using livecell dataset')
+            root='/content/drive/MyDrive/MARUNet/datasets/skov3_data/'
+            # root = '/content/drive/MyDrive/MARUNet/datasets/CrowdCounting/sha_384_4-10/'
             train_path = root+'train/'
+
             test_path = root+'test/'
+            print (len(os.listdir(train_path)),len(os.listdir(test_path)))
         elif args.dataset =='qnrf':
             root = '/content/drive/MyDrive/MARUNet/datasets/CrowdCounting/UCF-Train-Val-Test/'
             train_path = root+'train/'
             test_path = root+'test/'
-        train_loader, test_loader, train_img_paths, test_img_paths = get_loader(train_path, test_path, args)
+        train_loader, test_loader = get_loader_json(args)
+        # train_loader, test_loader, train_img_paths, test_img_paths = get_loader(train_path, test_path, args)
     else:
         train_loader, test_loader = get_loader_json(args)
     downsample_ratio = args.downsample
@@ -268,14 +273,13 @@ def main(args):
             logger.info('{} Epoch {}/{} Loss:{:.4f},lr:{:.7f}, [Train]{:.1f}, {:.1f}, [VAL]:{mae:.1f}, {rmse:.1f}, [Best]:{b_mae:.1f}, {b_rmse:.1f}'.format(model_name, epoch+1, args.epochs, train_loss/len(train_loader), optimizer.param_groups[0]['lr'], epoch_mae.get_avg(), np.sqrt(epoch_mse.get_avg()), mae=mae, rmse=rmse, b_mae=best_mae, b_rmse=best_rmse))
         else:
             logger.info('{} Epoch {}/{} Loss:{:.6f}, lr:{:.7f}, [CUR]:{mae:.1f}, {rmse:.1f}, [Best]:{b_mae:.1f}, {b_rmse:.1f}'.format(model_name, epoch+1, args.epochs, train_loss/len(train_loader), optimizer.param_groups[0]['lr'], mae=mae, rmse=rmse, b_mae=best_mae, b_rmse=best_rmse))
-    print('final weight saved to :', save_path)
-    torch.save(net.state_dict(), save_path)    
+        
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='PyTorch Crowd Counting')
     parser.add_argument('--model', metavar='model name', default='MARNet', choices=[ 'U_VGG', 'MARNet'], type=str)
     parser.add_argument('--downsample', metavar='downsample ratio', default=1, choices=[1, 2, 4, 8], type=int)
-    parser.add_argument('--dataset', metavar='dataset name', default='sha', choices=['sha','shb','qnrf', ], type=str)
+    parser.add_argument('--dataset', metavar='dataset name', default='sha', choices=['sha','shb','qnrf','livecell' ], type=str)
     parser.add_argument('--resume', metavar='resume model if exists', default='', type=str)
     parser.add_argument('--lr', type=float, default=1e-5, help='the initial learning rate')
     parser.add_argument('--gpu', default='0', help='assign device')
