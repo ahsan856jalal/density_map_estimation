@@ -15,14 +15,14 @@ import cv2
 # ensure the shorter side > min_size
 min_size = 384
 
-root = "/home/datamining/Datasets/CrowdCounting/"
+root = "/content/drive/MyDrive/MARUNet/datasets/CrowdCounting/"
 
 dir_dict = dict()
 dir_dict['sha'] = root + "shanghaitech/part_A_final/"
 dir_dict['shb'] = root + "shanghaitech/part_B_final/"
 save_dict = dict()
-save_dict['sha'] = '/home/datamining/Datasets/CrowdCounting/sha_384_4-10/'
-save_dict['shb'] = '/home/datamining/Datasets/CrowdCounting/shb_1024_f15/'
+save_dict['sha'] = '/content/drive/MyDrive/MARUNet/datasets/CrowdCounting/sha_384_4-10/'
+save_dict['shb'] = '/content/drive/MyDrive/MARUNet/datasets/CrowdCounting/shb_1024_f15/'
 dataset = 'sha'
 train_save = save_dict[dataset]+'train/'
 test_save = save_dict[dataset]+'test/'

@@ -11,7 +11,7 @@ import cv2
 
 
 # set the root to the dataset you download
-root = "/home/datamining/Datasets/CrowdCounting/"
+root = "/content/drive/MyDrive/MARUNet/datasets/CrowdCounting/"
 
 dir_dict = dict()
 dir_dict['sha'] = root + "shanghaitech/part_A_final/"
